@@ -1,0 +1,33 @@
+button,
+input {
+  font-family: inherit;
+  font-size: 24px;
+}
+input{
+  padding: 5px 0;
+}
+button{
+  padding: 5px 12px;
+}
+
+.timer {
+  display: flex;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  font-family: inherit;
+}
+.field:not(:first-child) {
+  margin-left: 25px;
+}
+.value {
+  font-size: 56px;
+  font-weight: 400;
+}
+.label {
+  text-transform: uppercase;
+  font-size: 20px;
+}
