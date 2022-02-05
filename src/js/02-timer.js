@@ -1,6 +1,7 @@
 import flatpickr from 'flatpickr';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import 'flatpickr/dist/flatpickr.min.css';
+import { convertMs } from './convert-functions';
 import '../css/timer.css';
 
 const refs = {
@@ -12,48 +13,44 @@ const refs = {
   secondsQuantity: document.querySelector('[data-seconds]'),
   spanData: document.querySelectorAll('span'),
 };
-
-const addLeadingZero = value => String(value).padStart(2, '0');
-
-function convertMs(ms) {
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
-
-  const days = addLeadingZero(Math.floor(ms / day));
-  const hours = addLeadingZero(Math.floor((ms % day) / hour));
-  const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
-  const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
-
-  return { days, hours, minutes, seconds };
-}
+refs.startBtn.setAttribute('disabled', true);
 
 let selectedDate = null;
-refs.startBtn.setAttribute('disabled', true);
 
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-
   onClose(selectedDates) {
-    if (selectedDates[0] < new Date()) {
-      Notify.failure('Please choose a date in the future');
-    } else {
-      refs.startBtn.removeAttribute('disabled');
-      selectedDate = selectedDates[0];
-    }
+    selectedDates[0] < new Date()
+      ? Notify.failure('Please choose a date in the future')
+      : refs.startBtn.removeAttribute('disabled'),
+      (selectedDate = selectedDates[0]);
   },
 };
 
 const onStartTimer = () => {
+  const timerId = setInterval(() => {
+    const currentDate = Date.now();
 
+    const deltaTime = selectedDate - currentDate;
+    const deltaMs = convertMs(deltaTime);
+
+    refs.daysQuantity.textContent = deltaMs.days;
+    refs.hoursQuantity.textContent = deltaMs.hours;
+    refs.minutesQuantity.textContent = deltaMs.minutes;
+    refs.secondsQuantity.textContent = deltaMs.seconds;
+
+    refs.inputSelectedDate.setAttribute('disabled', true);
+    refs.startBtn.setAttribute('disabled', true);
+
+    if (deltaTime <= 1000) {
+      refs.inputSelectedDate.removeAttribute('disabled');
+      clearInterval(timerId);
+    }
+  }, 1000);
 };
 
 flatpickr(refs.inputSelectedDate, options);
 refs.startBtn.addEventListener('click', onStartTimer);
-
-onStartTimer();
-
