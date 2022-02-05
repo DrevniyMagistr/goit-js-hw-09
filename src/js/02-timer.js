@@ -11,7 +11,6 @@ const refs = {
   hoursQuantity: document.querySelector('[data-hours]'),
   minutesQuantity: document.querySelector('[data-minutes]'),
   secondsQuantity: document.querySelector('[data-seconds]'),
-  spanData: document.querySelectorAll('span'),
 };
 refs.startBtn.setAttribute('disabled', true);
 
